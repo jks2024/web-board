@@ -4,6 +4,7 @@ import com.human.web_board.dto.CommentCreateReq;
 import com.human.web_board.dto.CommentRes;
 import com.human.web_board.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController  // RestFull API 통신을 위한 어노테이션, 내부적으로 JSON 직결화/역직렬화 지원
 @RequiredArgsConstructor // 생성자를 통해서 의존성 주입
 @RequestMapping("/api/comments")  // CommentRestController의 경로
+@Slf4j
 public class CommentRestController {
     private final CommentService commentService;
 
@@ -36,6 +38,7 @@ public class CommentRestController {
     // 댓글 삭제 : DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> delete(@PathVariable Long id) {
+        log.error("댓글 삭제 : {}", id);
         return ResponseEntity.ok(commentService.delete(id));
     }
 
