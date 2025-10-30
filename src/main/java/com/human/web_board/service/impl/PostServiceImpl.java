@@ -46,7 +46,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public boolean delete(Long id) {
         try {
-            return postDao.delete(id);
+            if (!postDao.delete(id)) {
+                throw new IllegalArgumentException("게시글을 삭제 할 수 없습니다.");
+            }
+            return true;
         } catch (DataAccessException e) {
             log.error("게시글 삭제 예외 발생: {}", e.getCause());
             throw new IllegalArgumentException("게시글을 삭제 할 수 없습니다.");
