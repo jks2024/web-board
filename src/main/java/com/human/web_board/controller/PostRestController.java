@@ -36,4 +36,9 @@ public class PostRestController {
     public ResponseEntity<Boolean> update(@PathVariable Long id, @RequestBody PostCreateReq req) {
         return ResponseEntity.ok(postService.edit(req, id));
     }
+    @DeleteMapping("/{id}")  // 게시글 삭제
+    public ResponseEntity<Boolean> delete(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.delete(id));
+    }
+
 }
