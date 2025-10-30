@@ -5,6 +5,8 @@ import com.human.web_board.dto.MemberRes;
 import com.human.web_board.dto.MemberSignupReq;
 import com.human.web_board.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Service   // Spring Container에 Bean 등록
 @RequiredArgsConstructor  // 생성자를 통한 의존성을 주입을 위해 생성자 생성
+@Slf4j
 public class MemberServiceImpl implements MemberService {
     private final MemberDao memberDao;  // 생성자를 통한 의존성 주입
     @Override
@@ -26,16 +29,27 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberRes getByEmail(String email) {
-        return memberDao.findByEmail(email);
+        MemberRes memberRes = memberDao.findByEmail(email);
+        if (memberRes == null) throw new IllegalArgumentException("존재하지 않는 회원 입니다.");
+        return memberRes;
     }
 
     @Override
     public MemberRes getById(Long id) {
-        return memberDao.findById(id);
+        MemberRes memberRes = memberDao.findById(id);
+        if (memberRes == null) throw new IllegalArgumentException("존재하지 않는 회원 입니다.");
+        return memberRes;
     }
 
     @Override
     public List<MemberRes> list() {
-        return memberDao.findAll();
+        List<MemberRes> list = null;
+        try {
+            list = memberDao.findAll();
+        } catch (DataAccessException e) {
+            log.error("회원 목록 조회 중 DB 예외 발생: {}", e.getCause());
+            throw new IllegalArgumentException("회원 목록을 조회 할 수 없습니다.");
+        }
+        return list;
     }
 }
