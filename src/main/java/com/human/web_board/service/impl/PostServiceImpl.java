@@ -48,8 +48,8 @@ public class PostServiceImpl implements PostService {
         try {
             return postDao.delete(id);
         } catch (DataAccessException e) {
-            log.error("댓글 삭제 예외 발생: {}", e.getCause());
-            throw new IllegalArgumentException("댓글을 삭제 할 수 없습니다.");
+            log.error("게시글 삭제 예외 발생: {}", e.getCause());
+            throw new IllegalArgumentException("게시글을 삭제 할 수 없습니다.");
         }
     }
 }
