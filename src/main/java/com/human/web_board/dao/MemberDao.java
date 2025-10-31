@@ -28,14 +28,6 @@ public class MemberDao {
         return jdbc.queryForObject("SELECT seq_member.CURRVAL FROM dual", Long.class);  // Long 타입의 id를 반환
     }
 
-    // 로그인
-    public boolean login(String email, String pwd) {
-        @Language("SQL")
-        String sql = "SELECT * FROM member WHERE email =? AND pwd=?";
-        MemberRes memberRes = jdbc.queryForObject(sql, new MemberRowMapper(), email, pwd);
-        return (memberRes != null);
-    }
-
     // 이메일로 회원 조회
     public MemberRes findByEmail(String email) {
         @Language("SQL")
