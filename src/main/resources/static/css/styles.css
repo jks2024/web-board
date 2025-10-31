@@ -1,0 +1,53 @@
+/* 전체 페이지 기본 스타일 */
+body {
+  background-color: #f4f4f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* 뷰 포트 전체 높이 사용 */
+  margin: 0;
+}
+
+/* 로그인 폼 스타일 */
+form {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 1px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 라벨 스타일 */
+label {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 입력 필드 스타일 */
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* 링크 섹션 스타일 */
+.links a {
+  text-decoration: none;
+  color: #6c757d;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+.link a:hover {
+  color: #007bff;
+}
