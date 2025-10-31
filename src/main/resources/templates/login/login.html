@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Title</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
-  </head>
-  <body>
-    <form th:action="@{/login}" method="post">
-      <label for="email">이메일</label>
-      <input type="text" name="email" id="email" required />
-      <label for="password">비밀번호</label>
-      <input type="password" name="pwd" id="password" required />
+<head>
+  <meta charset="UTF-8" />
+  <title>로그인</title>
+  <link rel="stylesheet" th:href="@{/css/login.css}" />
+</head>
+<body>
+<section class="card">
+  <h2>로그인</h2>
 
-      <button type="submit">로그인</button>
-      <div th:if="${error}" class="error-message" th:text="${error}"></div>
-    </form>
+  <form th:action="@{/login}" method="post">
+    <label for="email">이메일</label>
+    <input type="text" id="email" name="email" required />
+
+    <label for="password">비밀번호</label>
+    <input type="password" id="password" name="pwd" required />
+
+    <!-- 링크를 폼 안쪽에 두고 오른쪽 정렬 -->
     <div class="links">
-      <a href="/members/new">회원가입</a>
+      <a th:href="@{/members/new}">회원가입</a>
     </div>
-  </body>
+
+    <button type="submit">로그인</button>
+
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+  </form>
+</section>
+</body>
 </html>

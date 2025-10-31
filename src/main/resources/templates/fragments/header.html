@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Title</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}" />
-  </head>
-  <body>
-    <header th:fragment="header">
-      <div class="container">
-        <h1>게시판 목록</h1>
-        <nav>
-          <a href="/posts">게시글</a>
-          <a href="/members">회원 목록</a>
-          <a href="/logout">로그아웃</a>
-        </nav>
-      </div>
-    </header>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <title>Header</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<header th:fragment="header">
+  <div class="container header-inner">
+    <h1 class="logo"><a th:href="@{/posts}">Web Board</a></h1>
+    <nav class="nav">
+      <a th:href="@{/posts}" th:classappend="${active}=='posts' ? ' active'">게시글</a>
+      <a th:href="@{/members}" th:classappend="${active}=='members' ? ' active'">회원 목록</a>
+      <a th:href="@{/logout}">로그아웃</a>
+    </nav>
+  </div>
+</header>
+</body>
 </html>
