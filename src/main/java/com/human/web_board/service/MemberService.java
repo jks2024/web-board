@@ -10,6 +10,9 @@ public interface MemberService {
     // 회원 가입
     Long signup(MemberSignupReq req);
 
+    // 로그인
+    boolean login(String email, String pwd);
+
     // 이메일로 회원 조회
     MemberRes getByEmail(String email);
 

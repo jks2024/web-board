@@ -28,6 +28,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public boolean login(String email, String pwd) {
+        return memberDao.login(email, pwd);
+    }
+
+    @Override
     public MemberRes getByEmail(String email) {
         MemberRes memberRes = memberDao.findByEmail(email);
         if (memberRes == null) throw new IllegalArgumentException("존재하지 않는 회원 입니다.");
