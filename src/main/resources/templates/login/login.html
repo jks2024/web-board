@@ -13,7 +13,7 @@
       <input type="password" name="pwd" id="password" required />
 
       <button type="submit">로그인</button>
-      <div th:if="${error}" class="error" th:text="${error}"></div>
+      <div th:if="${error}" class="error-message" th:text="${error}"></div>
     </form>
     <div class="links">
       <a href="/members/new">회원가입</a>

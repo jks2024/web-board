@@ -31,7 +31,7 @@ public class LoginController {
             model.addAttribute("error", "이메일 또는 비밀번호가 일치하지 않습니다.");
             return "login/login";
         }
-        session.setAttribute("loginEmail", member);
+        session.setAttribute("loginMember", member);
         return "redirect:/posts";  // 게시글 목록 페이지로 이동
     }
 

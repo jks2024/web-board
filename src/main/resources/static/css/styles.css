@@ -51,3 +51,10 @@ button[type="submit"]:hover {
 .link a:hover {
   color: #007bff;
 }
+
+.error-message {
+    color: #dc3545; /* 글자 색상을 밝은 빨간색으로 지정 */
+    font-weight: bold; /* 글자를 굵게 만듭니다. */
+    text-align: center; /* 텍스트를 중앙에 정렬합니다. */
+    margin-top: 10px; /* 위쪽 여백을 줍니다. */
+}
