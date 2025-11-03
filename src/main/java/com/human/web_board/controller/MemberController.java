@@ -1,5 +1,6 @@
 package com.human.web_board.controller;
 
+import com.human.web_board.dto.MemberRes;
 import com.human.web_board.dto.MemberSignupReq;
 import com.human.web_board.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,8 +30,7 @@ public class MemberController {
 
     // 회원 가입 처리
     @PostMapping("/new")
-    public String signup(MemberSignupReq req, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) return "members/new";
+    public String signup(MemberSignupReq req, Model model) {
         try {
             memberService.signup(req);
         } catch (IllegalArgumentException e) {
@@ -38,5 +40,11 @@ public class MemberController {
         return "redirect:/";  // 가입이 성공하면 로그인 페이지로 이동
     }
 
-    // 회원 조회
+    // 회원 조회 ==> 실습
+    @GetMapping
+    public String list(Model model) {
+        List<MemberRes> members = memberService.list();
+        model.addAttribute("members", members);
+        return "members/list";
+    }
 }
