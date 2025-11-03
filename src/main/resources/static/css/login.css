@@ -42,6 +42,7 @@ label {
 }
 
 /* 입력 필드 */
+/* 입력 필드 */
 input[type="text"],
 input[type="password"],
 input[type="email"] {
@@ -54,6 +55,7 @@ input[type="email"] {
   background: #fff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+
 input:focus {
   outline: none;
   border-color: #2f7aff;
