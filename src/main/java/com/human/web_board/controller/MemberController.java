@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -47,4 +48,15 @@ public class MemberController {
         model.addAttribute("members", members);
         return "members/list";
     }
+
+    // 회원 정보 상세 보기
+    @GetMapping("/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        MemberRes member = memberService.getById(id);
+
+        return "/members/detail";
+    }
+
+
+    // 회원 정보 수정 하기
 }

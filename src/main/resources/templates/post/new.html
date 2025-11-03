@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>게시글 쓰기</title>
+  </head>
+  <body>
+    <div th:replace="fragments/header :: header"></div>
+    <form th:action="@{/posts/new}" th:object="${postCreateReq}" method="post">
+      <div>
+        <label for="title">제목</label>
+        <input type="text" id="title" th:field="*{title}" />
+      </div>
+      <div>
+        <label for="content">내용</label>
+        <textarea type="text" id="content" th:field="*{content}" rows="10" />
+      </div>
+
+      <button type="submit">등록</button>
+    </form>
+    <div th:replace="fragments/footer :: footer"></div>
+  </body>
+</html>

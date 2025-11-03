@@ -1,6 +1,7 @@
 package com.human.web_board.controller;
 
 import com.human.web_board.dto.MemberRes;
+import com.human.web_board.dto.PostCreateReq;
 import com.human.web_board.dto.PostRes;
 import com.human.web_board.service.PostService;
 import jakarta.servlet.http.HttpSession;
@@ -34,11 +35,34 @@ public class PostController {
     // 게시글 쓰기 폼
     @GetMapping("/new")
     public String postWriteForm(HttpSession session, Model model) {
-        return "posts/new";
+        if (session.getAttribute("loginMember") == null) {
+            return "redirect:/";
+        }
+        model.addAttribute(new PostCreateReq()); // 이름을 생략하면 postCreateReq로 모델에 등록
+        return "post/new";
     }
 
 
     // 게시글 쓰기 DB 처리
+    @PostMapping("/new")
+    public String create(PostCreateReq req, HttpSession session, Model model) {
+        MemberRes member = (MemberRes) session.getAttribute("loginMember");
+
+        log.error("게시글 쓰기 {}", req);
+
+        if (member == null) {
+            return "redirect:/";
+        }
+        try {
+            req.setMemberId(member.getId()); // 화면에서 정보를 입려 받을 수 없기 때문에 세션 정보에서 추출해서 넣어 줌
+            Long postId = postService.write(req);
+            return "redirect:/posts";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", e.getMessage());
+            return "posts/new";
+        }
+    }
+
 
 
     // 게시글 상세 조회
