@@ -67,7 +67,7 @@
         <!-- 컨트롤러에서 model.addAttribute("commentWrite", ...)로 제공 -->
         <form
           class="form"
-          th:action="@{|/posts/${post.id}/comments|}"
+          th:action="@{|/comments/${post.id}|}"
           th:object="${commentWrite}"
           method="post"
         >
@@ -110,7 +110,7 @@
           </thead>
           <tbody>
             <tr th:each="c : ${comments}">
-              <td th:text="${c.authorEmail}">user@example.com</td>
+              <td th:text="${c.memberEmail}">user@example.com</td>
               <td th:text="${c.content}" style="white-space: pre-wrap"></td>
               <td
                 th:text="${#temporals.format(c.createdAt,'yyyy-MM-dd HH:mm')}"
