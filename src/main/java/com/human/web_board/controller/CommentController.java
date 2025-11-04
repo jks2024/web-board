@@ -21,8 +21,8 @@ public class CommentController {
     public String create(@PathVariable Long postId, CommentCreateReq req, HttpSession session) {
         MemberRes member = (MemberRes) session.getAttribute("loginMember");
         if (member == null) return "redirect:/";
-        req.setPostId(postId);
-        req.setMemberId(member.getId());
+        req.setPostId(postId);   // 게시글 ID
+        req.setMemberId(member.getId());  // 작성자 ID
         commentService.write(req);
         return "redirect:/posts/" + postId;
     }
