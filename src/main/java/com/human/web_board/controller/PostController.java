@@ -1,8 +1,7 @@
 package com.human.web_board.controller;
 
-import com.human.web_board.dto.MemberRes;
-import com.human.web_board.dto.PostCreateReq;
-import com.human.web_board.dto.PostRes;
+import com.human.web_board.dto.*;
+import com.human.web_board.service.CommentService;
 import com.human.web_board.service.PostService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,7 @@ import java.util.List;
 @Slf4j
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
     @GetMapping  // 게시글 목록 가져 오기
     public String list(HttpSession session, Model model) {
         // 로그인 여부 확인 var은 타입 추론을 해서 자동으로 형을 찾아 줌
@@ -64,11 +64,27 @@ public class PostController {
     }
 
 
-
-    // 게시글 상세 조회
-    @GetMapping("/{postId}")
+    // 게시글 상세 조회 : 게시글 목록에서 해당 게시글을 클릭할 때 호출 됨
+    @GetMapping("/{postId}")  // URL 경로에 정보를 싣는 방식, http://localhost:8111/posts/2
     public String detail(@PathVariable Long postId, Model model, HttpSession session) {
-        return "posts/detail";
+        if (session.getAttribute("loginMember") == null) return "redirect:/";
+
+        PostRes post = postService.get(postId);  // 전달 받은 게시글 ID로 게시글 상세 정보를 가져 옴
+        if (post == null) return "redirect:/posts"; // 게시글 상세 조회 정보가 없으면 게시글 목록으로 이동
+
+        log.error("게시글 상세 조회 : {}", post);
+
+        // 댓글 목록 가져 오기, 게시글 ID로 댓글 목록 가져 오기
+        List<CommentRes> comments = commentService.list(postId);
+        model.addAttribute("post", post);  // 게시글 상세 정보 객체 전달
+        model.addAttribute("comments", comments); // 댓글 목록 리스트 전달
+
+//        // 댓글 등록 폼 바이딩
+//        CommentCreateReq commentWrite = new CommentCreateReq();
+//        commentWrite.setPostId(postId); // 댓글 등록 시 게시글 ID 필요
+//        model.addAttribute("commentWrite", commentWrite);
+
+        return "post/detail";
     }
 
 }

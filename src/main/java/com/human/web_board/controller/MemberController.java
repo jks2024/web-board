@@ -7,12 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import java.util.List;
 
 @Controller
@@ -53,6 +51,10 @@ public class MemberController {
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
         MemberRes member = memberService.getById(id);
+        if (member == null) {
+            model.addAttribute("error", "존배하지 않는 회원 입니다.");
+            return "/members/list";
+        }
 
         return "/members/detail";
     }
