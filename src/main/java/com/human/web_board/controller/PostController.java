@@ -79,10 +79,10 @@ public class PostController {
         model.addAttribute("post", post);  // 게시글 상세 정보 객체 전달
         model.addAttribute("comments", comments); // 댓글 목록 리스트 전달
 
-//        // 댓글 등록 폼 바이딩
-//        CommentCreateReq commentWrite = new CommentCreateReq();
-//        commentWrite.setPostId(postId); // 댓글 등록 시 게시글 ID 필요
-//        model.addAttribute("commentWrite", commentWrite);
+        // 댓글 등록 폼 바이딩
+        CommentCreateReq commentWrite = new CommentCreateReq();
+        commentWrite.setPostId(postId); // 댓글 등록 시 게시글 ID 필요
+        model.addAttribute("commentWrite", commentWrite);
 
         return "post/detail";
     }
