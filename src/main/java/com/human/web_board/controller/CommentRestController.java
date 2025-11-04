@@ -2,6 +2,7 @@ package com.human.web_board.controller;
 
 import com.human.web_board.dto.CommentCreateReq;
 import com.human.web_board.dto.CommentRes;
+import com.human.web_board.dto.CommentUpdateReq;
 import com.human.web_board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,12 @@ public class CommentRestController {
     // 댓글 수정 : PUT, 정보가 BODY에 포함 됨
     @PutMapping("/{id}")
     public ResponseEntity<Boolean> update(@PathVariable Long id, @RequestBody CommentCreateReq req) {
-        return ResponseEntity.ok(commentService.update(req, id));
+        CommentUpdateReq req1 = new CommentUpdateReq();
+        req1.setId(id);
+        req1.setContent(req.getContent());
+        req1.setMemberId(req.getMemberId());
+        req1.setPostId(req.getPostId());
+        return ResponseEntity.ok(commentService.update(req1));
     }
 
     // 댓글 삭제 : DELETE

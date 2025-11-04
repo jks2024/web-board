@@ -5,6 +5,7 @@ import com.human.web_board.dao.MemberDao;
 import com.human.web_board.dao.PostDao;
 import com.human.web_board.dto.CommentCreateReq;
 import com.human.web_board.dto.CommentRes;
+import com.human.web_board.dto.CommentUpdateReq;
 import com.human.web_board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,8 +36,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public boolean update(CommentCreateReq req, Long id) {
-        return commentDao.update(req, id);
+    public CommentRes detail(Long id) {
+        return commentDao.findById(id);
+    }
+
+    @Override
+    public boolean update(CommentUpdateReq req) {
+        return commentDao.update(req);
     }
 
     @Override

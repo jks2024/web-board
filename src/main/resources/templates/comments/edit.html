@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>댓글 수정</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+<!-- ✅ 신규 문법 -->
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container">
+  <div class="page-head">
+    <h2>댓글 수정</h2>
+  </div>
+
+  <div class="card" style="padding:24px">
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <form class="form"
+          th:action="@{|/comments/${commentUpdateReq.id}/edit|}"
+          th:object="${commentUpdateReq}"
+          method="post">
+      <input type="hidden" th:field="*{id}" />
+      <!-- ✅ 수정 후 리다이렉트 위해 postId hidden 필요 -->
+      <input type="hidden" th:field="*{postId}" />
+
+      <div>
+        <label for="content">내용</label>
+        <textarea id="content" th:field="*{content}" class="textarea" rows="6" required></textarea>
+        <div class="error-message" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+      </div>
+
+      <div class="actions">
+        <a class="btn" th:href="@{|/posts/${commentUpdateReq.postId}|}"
+           style="border:1px solid var(--border); background:#fff">취소</a>
+        <button type="submit" class="btn btn-primary">저장</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<!-- ✅ 신규 문법 -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

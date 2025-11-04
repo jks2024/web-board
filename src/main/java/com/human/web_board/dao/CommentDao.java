@@ -2,6 +2,7 @@ package com.human.web_board.dao;
 
 import com.human.web_board.dto.CommentCreateReq;
 import com.human.web_board.dto.CommentRes;
+import com.human.web_board.dto.CommentUpdateReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -37,6 +38,18 @@ public class CommentDao {
         return jdbc.query(sql, new CommentResMapper(), postId);
     }
 
+    // 개별 댓글 가져 오기
+    public CommentRes findById(Long id) {
+        @Language("SQL")
+        String sql = """
+            SELECT c.id, c.post_id, c.member_id, m.email, c.content, c.created_at
+            FROM comments c JOIN member m ON c.member_id = m.id
+            WHERE c.id = ?
+        """;
+        List<CommentRes> results = jdbc.query(sql, new CommentResMapper(), id);
+        return results.isEmpty() ? null : results.get(0);
+    }
+
     // 댓글 삭제
     public boolean delete(Long id) {
         @Language("SQL")
@@ -45,11 +58,13 @@ public class CommentDao {
     }
 
     // 댓글 수정
-    public boolean update(CommentCreateReq c, Long id) {
+    public boolean update(CommentUpdateReq c) {
         @Language("SQL")
         String sql = " UPDATE comments SET content = ? WHERE id = ?";
-        return jdbc.update(sql, c.getContent(), id) > 0;
+        return jdbc.update(sql, c.getContent(), c.getId()) > 0;
     }
+
+
 
     // mapper 메서드
     static class CommentResMapper implements RowMapper<CommentRes> {
