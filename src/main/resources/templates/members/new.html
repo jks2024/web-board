@@ -1,27 +1,107 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <title>회원가입</title>
-  <link rel="stylesheet" th:href="@{/css/login.css}" />
-</head>
-<body>
-<section class="card">
-  <h2>회원 가입</h2>
-  <div th:if="${error}" class="error-message" th:text="${error}"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}" />
+  </head>
+  <body>
+    <section class="card">
+      <h2>회원 가입</h2>
+      <div th:if="${error}" class="error-message" th:text="${error}"></div>
 
-  <form th:action="@{/members/new}" th:object="${memberForm}" method="post">
-    <label for="name">이름</label>
-    <input type="text" id="name" th:field="*{name}" required />
+      <form
+        th:action="@{/members/new}"
+        th:object="${memberForm}"
+        method="post"
+        id="signupForm"
+        novalidate
+      >
+        <label for="name">이름</label>
+        <input type="text" id="name" th:field="*{name}" required />
+        <div id="name-hint" class="hint"></div>
 
-    <label for="email">이메일</label>
-    <input type="email" id="email" th:field="*{email}" required />
+        <label for="email">이메일</label>
+        <input type="email" id="email" th:field="*{email}" required />
+        <div id="email-hint" class="hint"></div>
 
-    <label for="password">비밀번호</label>
-    <input type="password" id="password" th:field="*{pwd}" required />
+        <label for="password">비밀번호</label>
+        <input type="password" id="password" th:field="*{pwd}" required />
+        <div id="pwd-hint" class="hint"></div>
 
-    <button type="submit">가입하기</button>
-  </form>
-</section>
-</body>
+        <button type="submit">가입하기</button>
+      </form>
+    </section>
+
+    <script>
+      // 정규식 (클라이언트 전용)
+      const regexName = /^[A-Za-z가-힣\s]{2,30}$/;
+      const regexMail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+      const regexPw =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~]).{8,}$/;
+
+      // 요소
+      const nameInput = document.getElementById("name");
+      const emailInput = document.getElementById("email");
+      const pwdInput = document.getElementById("password");
+      const submitBtn = document.getElementById("submitBtn");
+
+      const nameHint = document.getElementById("name-hint");
+      const emailHint = document.getElementById("email-hint");
+      const pwdHint = document.getElementById("pwd-hint");
+
+      function validate(input, regex, hintEl, okMsg, badMsg) {
+        const v = input.value.trim();
+        if (v === "") {
+          hintEl.textContent = "";
+          hintEl.classList.remove("valid");
+          return null;
+        }
+        if (regex.test(v)) {
+          hintEl.textContent = okMsg;
+          hintEl.classList.add("valid");
+          return true;
+        }
+        hintEl.textContent = badMsg;
+        hintEl.classList.remove("valid");
+        return false;
+      }
+
+      function updateSubmitBtn() {
+        const n = validate(
+          nameInput,
+          regexName,
+          nameHint,
+          "사용 가능합니다.",
+          "이름은 한글/영문 2~30자"
+        );
+        const m = validate(
+          emailInput,
+          regexMail,
+          emailHint,
+          "사용 가능합니다.",
+          "이메일 형식을 확인하세요"
+        );
+        const p = validate(
+          pwdInput,
+          regexPw,
+          pwdHint,
+          "안전한 비밀번호입니다.",
+          "대/소문자+숫자+특수문자 포함 8자 이상"
+        );
+        submitBtn.disabled = !(n && m && p);
+      }
+
+      nameInput.addEventListener("input", updateSubmitBtn);
+      emailInput.addEventListener("input", updateSubmitBtn);
+      pwdInput.addEventListener("input", updateSubmitBtn);
+
+      document.getElementById("signupForm").addEventListener("submit", (e) => {
+        updateSubmitBtn();
+        if (submitBtn.disabled) e.preventDefault(); // 클라에서만 차단
+      });
+
+      document.addEventListener("DOMContentLoaded", updateSubmitBtn);
+    </script>
+  </body>
 </html>

@@ -126,3 +126,17 @@ input.is-invalid {
     padding: 22px;
   }
 }
+
+/* 필드별 실시간 메시지 */
+.hint {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #dc3545;
+}
+.hint.valid {
+  color: #28a745;
+}
+.reg-req-btn[disabled] {
+  background: #6c757d;
+  cursor: not-allowed;
+}
