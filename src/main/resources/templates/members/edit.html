@@ -2,46 +2,145 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>회원 수정</title>
+  <title>회원 정보 수정</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" />
 </head>
 <body>
-<h2>회원 정보 수정</h2>
+<header>
+  <div class="container header-inner">
+    <div class="logo"><a th:href="@{/}">WebBoard</a></div>
+    <nav class="nav">
+      <a th:href="@{/posts}" >게시글</a>
+      <a th:href="@{/members}" class="active">회원</a>
+    </nav>
+  </div>
+</header>
 
-<!-- member 가 null 이 아닐 때만 렌더 -->
-<div th:if="${member != null}">
-  <!-- 안전한 삼항 + 경로 바인딩 -->
-  <img
-          th:src="${member.profileImg} != null ?
-             @{/files/{file}(file=${member.profileImg})} :
-             @{/images/default-avatar.png}"
-          alt="프로필"
-          style="width:140px;height:140px;object-fit:cover;border:1px solid #ccc;" />
-</div>
-
-<form
-        th:action="@{/members/{id}/edit(id=${member.id})}"
-        th:object="${memberForm}"
-        method="post"
-        enctype="multipart/form-data"
->
-  <div>
-    <label>이름</label>
-    <input th:field="*{name}" required />
-    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+<main class="container">
+  <div class="page-head">
+    <h2>회원 정보 수정</h2>
   </div>
 
-  <div>
-    <label>새 비밀번호 (선택, 평문)</label>
-    <input type="password" th:field="*{password}" placeholder="비워두면 기존 유지" />
+  <div class="card" th:if="${member != null}">
+    <div class="profile-grid">
+      <!-- 좌측: 현재/미리보기 아바타 -->
+      <div class="profile-left">
+        <div class="avatar-box">
+          <img id="avatarPreview" class="avatar"
+               th:src="${member.profileImg} != null ?
+                        @{/files/{file}(file=${member.profileImg})} :
+                        @{/images/default-avatar.png}"
+               alt="프로필 미리보기" />
+          <div class="meta">
+            <div><strong th:text="${member.name}">홍길동</strong></div>
+            <div th:text="${member.email}">hong@example.com</div>
+          </div>
+          <div class="hint">이미지 선택 시 위 영역에 즉시 미리보기로 표시됩니다.</div>
+        </div>
+      </div>
+
+      <!-- 우측: 수정 폼 -->
+      <div class="profile-right">
+        <form class="form"
+              th:action="@{/members/{id}/edit(id=${member.id})}"
+              th:object="${memberForm}"
+              method="post"
+              enctype="multipart/form-data">
+
+          <div>
+            <label class="label" for="name">이름</label>
+            <input id="name" class="input" th:field="*{name}" required />
+            <div class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+          </div>
+
+          <div>
+            <label class="label" for="password">새 비밀번호 (선택, 평문)</label>
+            <input id="password" type="password" class="input"
+                   th:field="*{password}" placeholder="비워두면 기존 유지" />
+          </div>
+
+          <div>
+            <label class="label" for="profileImageInput">프로필 이미지 (선택)</label>
+            <input id="profileImageInput" class="input" type="file" name="profileImage" accept="image/*" />
+            <div class="hint">JPG/PNG/WebP 권장, 5MB 이하</div>
+          </div>
+
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">저장</button>
+            <a class="btn btn-outline" th:href="@{/members/{id}(id=${member.id})}">취소</a>
+            <button type="button" id="resetPreviewBtn" class="btn btn-outline">미리보기 원래대로</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
-  <div>
-    <label>프로필 이미지 (선택)</label>
-    <input type="file" name="profileImage" accept="image/*" />
+  <!-- member null 보호 -->
+  <div class="card empty" th:if="${member == null}">
+    존재하지 않는 회원입니다.
   </div>
+</main>
 
-  <button type="submit">저장</button>
-  <a th:href="@{/members/{id}(id=${member.id})}">취소</a>
-</form>
+<footer>
+  <div class="container footer-inner">
+    <p>© 2025 WebBoard</p>
+    <div class="footer-links">
+      <a th:href="@{/}">홈</a>
+      <a th:href="@{/members}">회원</a>
+    </div>
+  </div>
+</footer>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  (function() {
+    const input = document.getElementById('profileImageInput');
+    const img = document.getElementById('avatarPreview');
+    const resetBtn = document.getElementById('resetPreviewBtn');
+
+    // 서버에서 내려온 원본 이미지 경로 저장(없으면 빈 문자열)
+    const originalSrc = /*[[${member != null}]]*/ false
+            ? /*[[${member.profileImg} != null ? @{/files/{file}(file=${member.profileImg})} : @{/images/default-avatar.png}]]*/ ''
+            : '';
+
+    let objectUrl = null;
+    function revoke() {
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+        objectUrl = null;
+      }
+    }
+
+    input?.addEventListener('change', function(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const okTypes = ['image/jpeg','image/png','image/webp','image/gif'];
+      if (!okTypes.includes(file.type)) {
+        alert('이미지 파일(JPG/PNG/WebP/GIF)만 업로드할 수 있습니다.');
+        input.value = '';
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert('파일 용량은 5MB 이하만 가능합니다.');
+        input.value = '';
+        return;
+      }
+
+      revoke();
+      objectUrl = URL.createObjectURL(file);
+      img.src = objectUrl;
+    });
+
+    resetBtn?.addEventListener('click', function() {
+      revoke();
+      if (originalSrc) img.src = originalSrc;
+      if (input) input.value = '';
+    });
+
+    window.addEventListener('beforeunload', revoke);
+  })();
+  /*]]>*/
+</script>
 </body>
 </html>

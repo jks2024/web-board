@@ -286,3 +286,41 @@ main.container {
   font-size: 13px;
   margin-top: 6px;
 }
+
+/* === Member Edit (page-only) === */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+}
+@media (max-width: 860px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-left {
+  padding: 24px;
+  border-right: 1px solid var(--border);
+}
+@media (max-width: 860px) {
+  .profile-left {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+.profile-right { padding: 24px; }
+
+.avatar-box { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.avatar {
+  width: 180px; height: 180px; border-radius: 12px;
+  border: 1px solid var(--border); object-fit: cover; background: #fff;
+}
+.meta { font-size: 12px; color: var(--muted); text-align: center; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+.page-head h2 { margin: 0; font-size: 22px; }
+
+.card .profile-grid {
+  padding: 24px; /* 전체 여백 추가 */
+}
