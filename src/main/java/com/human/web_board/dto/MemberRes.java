@@ -14,5 +14,6 @@ public class MemberRes {
     private String email;   // 이메일
     private String pwd;     // 비밀번호
     private String name;    // 이름
-    private LocalDateTime redDate;  // 가입일
+    private LocalDateTime regDate;  // 가입일
+    private String profileImg;
 }

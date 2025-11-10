@@ -21,4 +21,7 @@ public interface MemberService {
 
     // 회원 목록 보기
     List<MemberRes> list();
+
+    // 회원 정보 수정 하기
+    void updateMember(Long id, String name, String pwd, String profileImg);
 }

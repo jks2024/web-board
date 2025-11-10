@@ -34,7 +34,8 @@ public class MemberServiceImpl implements MemberService {
             //throw new IllegalArgumentException("이메일이 존재 하지 않거나 비밀번호가 맞지 않습니다.");
             return null;
         }
-        return new MemberRes(member.getId(), member.getEmail(), member.getPwd(), member.getName(), member.getRedDate());
+        return new MemberRes(member.getId(), member.getEmail(),
+                member.getPwd(), member.getName(), member.getRegDate(), member.getProfileImg());
     }
 
     @Override
@@ -61,5 +62,11 @@ public class MemberServiceImpl implements MemberService {
             throw new IllegalArgumentException("회원 목록을 조회 할 수 없습니다.");
         }
         return list;
+    }
+
+    @Override
+    @Transactional
+    public void updateMember(Long id, String name, String pwd, String profileImg) {
+        memberDao.updateMember(id, name, pwd, profileImg);
     }
 }

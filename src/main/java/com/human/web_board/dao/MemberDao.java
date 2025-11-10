@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 // DB와 정보를 주고 받기 위한 SQL 작성 구간
@@ -23,7 +25,10 @@ public class MemberDao {
     // 회원 가입
     public Long save(MemberSignupReq m) {
         @Language("SQL")
-        String sql = "INSERT INTO member(id, email, pwd, name) VALUES (seq_member.NEXTVAL, ?, ?, ?)";
+        String sql = """
+            INSERT INTO member (id, email, pwd, name, reg_date, profile_img)
+            VALUES (seq_member.NEXTVAL, ?, ?, ?, SYSTIMESTAMP, NULL)
+            """;
         jdbc.update(sql, m.getEmail(), m.getPwd(), m.getName());
         return jdbc.queryForObject("SELECT seq_member.CURRVAL FROM dual", Long.class);  // Long 타입의 id를 반환
     }
@@ -31,7 +36,11 @@ public class MemberDao {
     // 이메일로 회원 조회
     public MemberRes findByEmail(String email) {
         @Language("SQL")
-        String sql = "SELECT * FROM member WHERE email=?";
+        String sql = """
+            SELECT id, email, pwd, name, reg_date, profile_img
+              FROM member
+             WHERE email = ?
+            """;
         List<MemberRes> list = jdbc.query(sql, new MemberRowMapper(), email);
         return list.isEmpty() ? null : list.get(0); // 조회 시 결과가 없는 경우 null을 넣기 위해서
     }
@@ -39,15 +48,43 @@ public class MemberDao {
     // ID로 회원 조회
     public MemberRes findById(Long id) {
         @Language("SQL")
-        String sql = "SELECT * FROM member WHERE id=?";
+        String sql = """
+            SELECT id, email, pwd, name, reg_date, profile_img
+              FROM member
+             WHERE id = ?
+            """;
         List<MemberRes> list = jdbc.query(sql, new MemberRowMapper(), id);
         return list.isEmpty() ? null : list.get(0); // 조회 시 결과가 없는 경우 null을 넣기 위해서
+    }
+
+    // 회원 정보 수정
+    public boolean updateMember(Long id, String name, String pwd, String profileImg) {
+        StringBuilder sql = new StringBuilder("UPDATE member SET name = ?");
+        List<Object> args = new ArrayList<>();
+        args.add(name);
+
+        if (pwd != null && !pwd.isBlank()) {
+            sql.append(", pwd = ?");
+            args.add(pwd); // ⚠ 현재 요구사항: 평문 저장
+        }
+        if (profileImg != null && !profileImg.isBlank()) {
+            sql.append(", profile_img = ?");
+            args.add(profileImg);
+        }
+        sql.append(" WHERE id = ?");
+        args.add(id);
+
+        return jdbc.update(sql.toString(), args.toArray()) > 0;
     }
 
     // 전체 회원 조회
     public List<MemberRes> findAll() {
         @Language("SQL")
-        String sql = "SELECT * from member ORDER BY id DESC";
+        String sql = """
+            SELECT id, email, pwd, name, reg_date, profile_img
+              FROM member
+             ORDER BY id DESC
+            """;
         return jdbc.query(sql, new MemberRowMapper());
     }
 
@@ -55,13 +92,19 @@ public class MemberDao {
     static class MemberRowMapper implements RowMapper<MemberRes> {
         @Override
         public MemberRes mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new MemberRes(
-              rs.getLong("id"),
-              rs.getString("email"),
-              rs.getString("pwd"),
-              rs.getString("name"),
-              rs.getTimestamp("reg_date").toLocalDateTime()
-            );
+            MemberRes m = new MemberRes();
+            m.setId(rs.getLong("id"));
+            m.setEmail(rs.getString("email"));
+            m.setPwd(rs.getString("pwd"));
+            m.setName(rs.getString("name"));
+
+            Timestamp ts = rs.getTimestamp("reg_date");
+            if (ts != null) {
+                m.setRegDate(ts.toLocalDateTime()); // DTO 필드명이 regDate라면 여기에 맞춰 세터 사용
+            }
+
+            m.setProfileImg(rs.getString("profile_img")); // ✅ 추가 매핑
+            return m;
         }
     }
 

@@ -2,12 +2,15 @@ package com.human.web_board.controller;
 
 import com.human.web_board.dto.MemberRes;
 import com.human.web_board.dto.MemberSignupReq;
+import com.human.web_board.dto.MemberUpdateReq;
+import com.human.web_board.service.FileStorageService;
 import com.human.web_board.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,6 +20,7 @@ import java.util.List;
 @RequestMapping("/members")
 public class MemberController {
     private final MemberService memberService;  // 의존성 주입
+    private final FileStorageService fileStorageService;
     // 회원 가입 폼 페이지
     @GetMapping("/new")
     public String signupForm(Model model) {
@@ -50,13 +54,54 @@ public class MemberController {
     public String detail(@PathVariable Long id, Model model) {
         MemberRes member = memberService.getById(id);
         if (member == null) {
-            model.addAttribute("error", "존배하지 않는 회원 입니다.");
-            return "/members/list";
+            model.addAttribute("error", "존재하지 않는 회원 입니다.");
+            return "members/list";
         }
+        model.addAttribute("member", member);
+        return "members/detail";
+    }
 
-        return "/members/detail";
+    // 수정 폼
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model) {
+        MemberRes member = memberService.getById(id);
+        if (member == null) {
+            model.addAttribute("error", "존재하지 않는 회원입니다.");
+            return "members/list";
+        }
+        model.addAttribute("member", member);  // 현재 회원 정보 표시
+        MemberUpdateReq form = new MemberUpdateReq();  // 수정용 데이터
+        form.setName(member.getName());  // 이름값은 기본으로 채워 둠
+        form.setPassword("");  // 비워 둠
+        model.addAttribute("memberForm", form);
+        return "members/edit";
     }
 
 
     // 회원 정보 수정 하기
+    @PostMapping("/{id}/edit")
+    public String updateMember (@PathVariable Long id,
+                                @ModelAttribute ("memberForm")MemberUpdateReq req,
+                                @RequestParam(value = "profileImage", required = false)MultipartFile profileImage,
+                                Model model
+                                ) {
+        // 현재 회원 정보 조회
+        MemberRes member = memberService.getById(id);
+        if (member == null) {
+            model.addAttribute("error", "존재하지 않는 회원 입니다.");
+            return "members/list";
+        }
+        //업로드(선택) : 이미지가 있으면 저장 후 상대 경로 확보
+        String newImagePath = null;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            newImagePath = fileStorageService.saveImage(profileImage, "members");
+        }
+        memberService.updateMember(id, req.getName(), req.getPassword(), newImagePath);
+        if (newImagePath != null) {
+            return "redirect:/members/" + id;
+        } else {
+            return "redirect:/members";
+        }
+    }
+
 }

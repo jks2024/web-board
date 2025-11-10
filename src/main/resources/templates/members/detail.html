@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${member.name} + ' 상세'">회원 상세</title>
+</head>
+<body>
+<h2>회원 상세</h2>
+
+<div>
+    <img th:src="${member.profileImg} != null ? @{'/files/' + ${member.profileImg}} : @{'/images/default-avatar.png'}"
+         alt="프로필" style="width:120px;height:120px;object-fit:cover;border-radius:60px;" />
+</div>
+
+<p><b>이메일:</b> <span th:text="${member.email}"></span></p>
+<p><b>이름:</b> <span th:text="${member.name}"></span></p>
+<p><b>가입일:</b> <span th:text="${#temporals.format(member.regDate, 'yyyy-MM-dd HH:mm')}"></span></p>
+
+<a th:href="@{|/members/${member.id}/edit|}">수정</a>
+<a th:href="@{/members}">목록</a>
+</body>
+</html>

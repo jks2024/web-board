@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>회원 수정</title>
+</head>
+<body>
+<h2>회원 정보 수정</h2>
+
+<!-- member 가 null 이 아닐 때만 렌더 -->
+<div th:if="${member != null}">
+  <!-- 안전한 삼항 + 경로 바인딩 -->
+  <img
+          th:src="${member.profileImg} != null ?
+             @{/files/{file}(file=${member.profileImg})} :
+             @{/images/default-avatar.png}"
+          alt="프로필"
+          style="width:140px;height:140px;object-fit:cover;border:1px solid #ccc;" />
+</div>
+
+<form
+        th:action="@{/members/{id}/edit(id=${member.id})}"
+        th:object="${memberForm}"
+        method="post"
+        enctype="multipart/form-data"
+>
+  <div>
+    <label>이름</label>
+    <input th:field="*{name}" required />
+    <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+  </div>
+
+  <div>
+    <label>새 비밀번호 (선택, 평문)</label>
+    <input type="password" th:field="*{password}" placeholder="비워두면 기존 유지" />
+  </div>
+
+  <div>
+    <label>프로필 이미지 (선택)</label>
+    <input type="file" name="profileImage" accept="image/*" />
+  </div>
+
+  <button type="submit">저장</button>
+  <a th:href="@{/members/{id}(id=${member.id})}">취소</a>
+</form>
+</body>
+</html>
